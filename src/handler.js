@@ -1,5 +1,29 @@
 const books = require('./books')
 const { nanoid } = require('nanoid')
+const Knex = require('./knex')
+
+// * trying get all books using Knex library query builder
+const getBooks = async (request, h) => {
+  const data = await Knex.knex.select('*').from('books')
+  if (data.length === 0) {
+    const response = h.response({
+      status: 'failed',
+      message: 'Books are null'
+    })
+    response.code(404)
+    return response
+  }
+
+  const response = h.response({
+    status: 'success',
+    data: {
+      books: data
+    }
+  })
+
+  response.code(200)
+  return response
+}
 
 const getAllBooks = (request, h) => {
   const { reading, name, finished } = request.query
@@ -298,5 +322,6 @@ module.exports = {
   addBooks,
   getBookById,
   editBookById,
-  deleteBookById
+  deleteBookById,
+  getBooks
 }
