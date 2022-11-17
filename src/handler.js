@@ -25,6 +25,75 @@ const getBooks = async (request, h) => {
   return response
 }
 
+const insertBook = async (request, h) => {
+  const {
+    name,
+    year,
+    author,
+    summary,
+    publisher,
+    pageCount,
+    readPage,
+    reading
+  } = request.payload
+
+  const timestamp = Date.now()
+
+  const finished = readPage === pageCount
+
+  // ! nama == null
+  if (name === undefined) {
+    const response = h.response({
+      status: 'fail',
+      message: 'Gagal menambahkan buku. Mohon isi nama buku'
+    })
+    response.code(400)
+    return response
+  }
+
+  // ! halaman yang dibaca melebihi jumlah halaman
+  if (pageCount <= readPage) {
+    const response = h.response({
+      status: 'fail',
+      message: 'Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount'
+    }).code(400)
+    return response
+  }
+
+  const emptyName = await Knex.knex('books').where('name', name).select('name')
+  // console.log(emptyName.length <= 1)
+
+  if (emptyName.length >= 1) {
+    const response = h.response({
+      status: 'fail',
+      message: 'Gagal menambahkan buku. Nama buku sudah ada'
+    }).code(400)
+
+    return response
+  }
+
+  const data = await Knex.knex('books').insert({
+    name,
+    year,
+    author,
+    summary,
+    publisher,
+    pageCount,
+    readPage,
+    reading,
+    finished,
+    created_at: timestamp
+  })
+
+  const response = h.response({
+    status: 'success',
+    message: 'Data saved successfully',
+    data
+  })
+  response.code(201)
+  return response
+}
+
 const getAllBooks = (request, h) => {
   const { reading, name, finished } = request.query
 
@@ -323,5 +392,6 @@ module.exports = {
   getBookById,
   editBookById,
   deleteBookById,
-  getBooks
+  getBooks,
+  insertBook
 }

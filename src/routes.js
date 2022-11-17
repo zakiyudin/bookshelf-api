@@ -4,7 +4,8 @@ const {
   getBookById,
   editBookById,
   deleteBookById,
-  getBooks
+  getBooks,
+  insertBook
 } = require('./handler')
 
 const routes = [
@@ -33,10 +34,16 @@ const routes = [
     path: '/books/{id}',
     handler: deleteBookById
   },
+  // ! menggunakan KNEX library untuk konek ke DB MYSQL
   {
     method: 'GET',
     path: '/books/getBook',
     handler: getBooks
+  },
+  {
+    method: 'POST',
+    path: '/books/postBook',
+    handler: insertBook
   }
 ]
 
