@@ -94,6 +94,112 @@ const insertBook = async (request, h) => {
   return response
 }
 
+const updateBook = async (request, h) => {
+  const id = request.params.id
+  const {
+    name,
+    year,
+    author,
+    summary,
+    publisher,
+    pageCount,
+    readPage,
+    reading
+  } = request.payload
+
+  // console.log(id)
+
+  // ! nama buku tidak ada
+  if (name === undefined) {
+    const response = h.response({
+      status: 'fail',
+      message: 'Gagal memperbarui buku, Nama buku tidak boleh kosong'
+    }).code(400)
+
+    return response
+  }
+
+  // ! readPage lebih dari halaman buku
+  if (readPage >= pageCount) {
+    const response = h.response({
+      status: 'fail',
+      message: 'Gagal memperbarui buku, readPage lebih dari halaman buku'
+    }).code(400)
+
+    return response
+  }
+
+  const idCheck = Knex.knex('books').where('id', '!=', id)
+  console.log(idCheck)
+  if (idCheck) {
+    const response = h.response({
+      status: 'fail',
+      message: 'Gagal memperbarui buku, id tidak ditemukan'
+    }).code(404)
+
+    return response
+  }
+
+  const finished = readPage === pageCount
+
+  await Knex.knex('books').where('id', id).update({
+    name,
+    year,
+    author,
+    summary,
+    publisher,
+    pageCount,
+    readPage,
+    reading,
+    finished
+  })
+
+  const response = h.response({
+    status: 'success',
+    message: 'Buku berhasil diperbarui'
+  }).code(201)
+
+  return response
+}
+
+const getSpecificBook = async (request, h) => {
+  const { id } = request.params
+
+  // const books = await Knex.knex.select('*').from('books')
+  // console.log(books)
+  // const checkId = books.filter(book => book.id === id).map(result => result.id)
+  // console.log(checkId)
+
+  const data = await Knex.knex('books').where('id', id)
+  // if (data === null) {
+  //   const response = h.response({
+  //     status: 'fail'
+  //   }).code(404)
+  //   return response
+  // }
+  const response = h.response({
+    data: data.map(result => ({
+      id: result.id,
+      name: result.name,
+      publisher: result.publisher
+    }))
+  }).code(200)
+  return response
+}
+
+const delBook = async (request, h) => {
+  const { id } = request.params
+
+  await Knex.knex('books').where('id', id).del()
+
+  const response = h.response({
+    status: 'success',
+    message: 'Buku berhasil dihapus'
+  }).code(200)
+
+  return response
+}
+
 const getAllBooks = (request, h) => {
   const { reading, name, finished } = request.query
 
@@ -393,5 +499,8 @@ module.exports = {
   editBookById,
   deleteBookById,
   getBooks,
-  insertBook
+  insertBook,
+  updateBook,
+  getSpecificBook,
+  delBook
 }

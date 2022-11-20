@@ -5,7 +5,10 @@ const {
   editBookById,
   deleteBookById,
   getBooks,
-  insertBook
+  insertBook,
+  updateBook,
+  getSpecificBook,
+  delBook
 } = require('./handler')
 
 const routes = [
@@ -44,6 +47,21 @@ const routes = [
     method: 'POST',
     path: '/books/postBook',
     handler: insertBook
+  },
+  {
+    method: 'PUT',
+    path: '/books/updateBook/{id}',
+    handler: updateBook
+  },
+  {
+    method: 'GET',
+    path: '/books/getSpecificBook/{id}',
+    handler: getSpecificBook
+  },
+  {
+    method: 'DELETE',
+    path: '/books/delBook/{id}',
+    handler: delBook
   }
 ]
 
