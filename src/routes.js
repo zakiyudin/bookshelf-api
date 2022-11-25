@@ -9,7 +9,11 @@ const {
   updateBook,
   getSpecificBook,
   delBook
-} = require('./handler')
+} = require('./handler/bookHandler')
+
+const {
+  getAllUser, addUser
+} = require('./handler/userHandler')
 
 const routes = [
   {
@@ -62,6 +66,16 @@ const routes = [
     method: 'DELETE',
     path: '/books/delBook/{id}',
     handler: delBook
+  },
+  {
+    method: 'GET',
+    path: '/users/',
+    handler: getAllUser
+  },
+  {
+    method: 'POST',
+    path: '/users/',
+    handler: addUser
   }
 ]
 

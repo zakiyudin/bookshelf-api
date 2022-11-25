@@ -1,6 +1,6 @@
-const books = require('./books')
+const books = require('../books')
 const { nanoid } = require('nanoid')
-const Knex = require('./knex')
+const Knex = require('../knex')
 
 // * trying get all books using Knex library query builder
 const getBooks = async (request, h) => {
