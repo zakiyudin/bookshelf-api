@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const Knex = require('../knex')
 
 const getAllUser = async (request, h) => {
@@ -26,6 +27,14 @@ const addUser = async (request, h) => {
     phone,
     isMember
   } = request.payload
+
+  if (full_name === undefined || full_name === '') {
+    const response = h.response({
+      status: 'fail',
+      message: 'Nama user tidak boleh kosong'
+    }).code(400)
+    return response
+  }
 
   await Knex.knex('users').insert({
     // eslint-disable-next-line camelcase
