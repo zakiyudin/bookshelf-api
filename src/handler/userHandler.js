@@ -51,7 +51,74 @@ const addUser = async (request, h) => {
   return response
 }
 
+const updateUser = async (request, h) => {
+  const { id } = request.params
+
+  const {
+    full_name,
+    address,
+    phone,
+    isMember
+  } = request.payload
+
+  const idCheck = await Knex.knex('users').where('id_user', '=', id)
+  console.log(idCheck.length)
+  if (idCheck.length === 0) {
+    const response = h.response({
+      status: 'fail',
+      message: 'id tidak ditemukan'
+    }).code(404)
+    return response
+  }
+
+  if (full_name === undefined || full_name === '') {
+    const response = h.response({
+      status: 'fail',
+      message: 'Nama user tidak boleh kosong'
+    }).code(400)
+
+    return response
+  }
+
+  await Knex.knex('users').where('id_user', id).update({
+    full_name,
+    address,
+    phone,
+    isMember
+  })
+
+  const response = h.response({
+    status: 'success',
+    message: 'User berhasil diperbarui'
+  }).code(201)
+  return response
+}
+
+const deleteUser = async (request, h) => {
+  const { id } = request.params
+
+  const idCheck = await Knex.knex('users').where('id_user', '=', id)
+  // console.log(idCheck.length)
+  if (idCheck.length === 0) {
+    const response = h.response({
+      status: 'fail',
+      message: 'id tidak ditemukan'
+    }).code(404)
+    return response
+  }
+
+  await Knex.knex('users').where('id_user', id).del()
+
+  const response = h.response({
+    status: 'success',
+    message: 'User berhasil dihapus'
+  }).code(200)
+  return response
+}
+
 module.exports = {
   getAllUser,
-  addUser
+  addUser,
+  updateUser,
+  deleteUser
 }

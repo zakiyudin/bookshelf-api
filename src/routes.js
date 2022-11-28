@@ -12,7 +12,7 @@ const {
 } = require('./handler/bookHandler')
 
 const {
-  getAllUser, addUser
+  getAllUser, addUser, updateUser, deleteUser
 } = require('./handler/userHandler')
 
 const routes = [
@@ -76,6 +76,16 @@ const routes = [
     method: 'POST',
     path: '/users/',
     handler: addUser
+  },
+  {
+    method: 'PUT',
+    path: '/users/{id}',
+    handler: updateUser
+  },
+  {
+    method: 'DELETE',
+    path: '/users/{id}',
+    handler: deleteUser
   }
 ]
 
